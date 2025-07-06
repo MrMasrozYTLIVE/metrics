@@ -7,7 +7,7 @@ FROM node:22
 # Based on https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 RUN set -x \
   && apt-get update \
-  && apt-get install -y --no-install-recommends wget ca-certificates \
+  && apt-get install -y --no-install-recommends wget ca-certificates xz-utils \
   && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
   && apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
   && rm -rf ./google-chrome-stable_current_amd64.deb /var/lib/apt/lists/*
