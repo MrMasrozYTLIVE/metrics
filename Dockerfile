@@ -20,9 +20,9 @@ COPY --from=denoland/deno:bin /deno /usr/local/bin/deno
 # TODO: pin major pkgx version
 COPY --from=pkgxdev/pkgx:busybox /usr/local/bin/pkgx /usr/local/bin/pkgx
 COPY --chmod=+x <<EOF /usr/local/bin/licensed
-#!/usr/bin/env -S pkgx --shebang --quiet +github.com/sparklemotion/nokogiri@1.16.5 +github.com/licensee/licensed@5 -- licensed
+#!/usr/bin/env -S pkgx --shebang --quiet +github.com/licensee/licensed@5 -- licensed
 EOF
-RUN licensed --version
+RUN NOKOGIRI_USE_SYSTEM_LIBRARIES=1 licensed --version
 
 # Environment variables
 ENV PUPPETEER_SKIP_DOWNLOAD="true"
