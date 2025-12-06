@@ -7,10 +7,28 @@ FROM node:22
 # Based on https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
 RUN set -x \
   && apt-get update \
-  && apt-get install -y --no-install-recommends wget ca-certificates xz-utils \
+  && apt-get install -y --no-install-recommends wget ca-certificates xz-utils build-essential zlib1g-dev \
   && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-  && apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-  && rm -rf ./google-chrome-stable_current_amd64.deb /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 libxml2 libxml2-dev \
+  && rm -rf ./google-chrome-stable_current_amd64.deb \
+  && wget https://download.gnome.org/sources/libxml2/2.12/libxml2-2.12.7.tar.xz \
+  && tar -xf libxml2-2.12.7.tar.xz \
+  && cd libxml2-2.12.7 \
+  && ./configure --prefix=/usr/local --without-python \
+  && make -j$(nproc) \
+  && make install \
+  && cd .. \
+  && rm -rf libxml2-2.12.7* \
+  && wget https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz \
+  && tar -xf libxslt-1.1.39.tar.xz \
+  && cd libxslt-1.1.39 \
+  && ./configure --prefix=/usr/local --with-libxml-prefix=/usr/local \
+  && make -j$(nproc) \
+  && make install \
+  && cd .. \
+  && rm -rf libxslt-1.1.39* \
+  && ldconfig \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install deno for miscellaneous scripts
 # TODO: pin major deno version
@@ -22,7 +40,7 @@ COPY --from=pkgxdev/pkgx:busybox /usr/local/bin/pkgx /usr/local/bin/pkgx
 COPY --chmod=+x <<EOF /usr/local/bin/licensed
 #!/usr/bin/env -S pkgx --shebang --quiet +github.com/licensee/licensed@5 -- licensed
 EOF
-RUN NOKOGIRI_USE_SYSTEM_LIBRARIES=1 licensed --version
+RUN licensed --version
 
 # Environment variables
 ENV PUPPETEER_SKIP_DOWNLOAD="true"
