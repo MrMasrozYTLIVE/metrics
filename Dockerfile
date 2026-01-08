@@ -27,6 +27,7 @@ RUN chmod +x /metrics/source/app/action/index.mjs \
   && rm -rf /var/lib/apt/lists/* \
   # Install node modules and rebuild indexes
   && npm ci \
+  && npx puppeteer browsers install chrome \
   && npm run build
 
 # Environment variables
