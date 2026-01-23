@@ -15,6 +15,8 @@ RUN chmod +x /metrics/source/app/action/index.mjs \
   && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
   && apt-get update \
   && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 libx11-xcb1 libxtst6 lsb-release --no-install-recommends \
+  && ls -l /usr/bin/google-chrome* \
+  && /usr/bin/google-chrome --version \
   # Install deno for miscellaneous scripts
   && apt-get install -y curl unzip \
   && curl -fsSL https://deno.land/x/install/install.sh | DENO_INSTALL=/usr/local sh \
@@ -30,8 +32,8 @@ RUN chmod +x /metrics/source/app/action/index.mjs \
   && npm run build
 
 # Environment variables
-#ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-#ENV PUPPETEER_BROWSER_PATH "google-chrome-stable"
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV PUPPETEER_BROWSER_PATH "/usr/bin/google-chrome"
 
 # Execute GitHub action
 ENTRYPOINT node /metrics/source/app/action/index.mjs
